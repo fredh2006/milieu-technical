@@ -57,34 +57,34 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
   }, [onFiltersChange, searchTerm, statusFilter, locationFilter, showExpiringWithin7Days]);
 
   return (
-    <div className="py-4">
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-4">
+    <div className="py-6">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <button
             onClick={onAddItem}
-            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-blue-500/25"
           >
             <Upload className="w-4 h-4" />
             Add Item
           </button>
 
-          <div className="flex-1 relative">
+          <div className="flex-1 relative max-w-md">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Search items..."
-              className="w-full max-w-md pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 backdrop-blur-sm placeholder-slate-400"
             />
-            <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" />
           </div>
 
-          <div className="ml-auto flex items-center gap-2 bg-white rounded-lg border border-gray-300 p-1">
+          <div className="ml-auto flex items-center gap-1 bg-white/70 backdrop-blur-sm rounded-xl border border-white/40 p-1">
             <button 
-              className={`p-2 rounded transition-colors ${
+              className={`p-2.5 rounded-lg transition-all duration-200 ${
                 viewMode === 'table' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
               onClick={() => onViewModeChange?.('table')}
               title="Table view"
@@ -93,10 +93,10 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
             </button>
 
             <button 
-              className={`p-2 rounded transition-colors ${
+              className={`p-2.5 rounded-lg transition-all duration-200 ${
                 viewMode === 'grid' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
               onClick={() => onViewModeChange?.('grid')}
               title="Grid view"
@@ -106,11 +106,11 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <select
             value={statusFilter}
             onChange={(e) => handleStatusFilterChange(e.target.value as ItemStatus | 'All')}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+            className="px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 backdrop-blur-sm font-medium text-slate-700"
           >
             <option value="All">All Status</option>
             <option value="Fresh">Fresh</option>
@@ -121,7 +121,7 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
           <select
             value={locationFilter}
             onChange={(e) => handleLocationFilterChange(e.target.value as FreezerLocation | 'All')}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+            className="px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 backdrop-blur-sm font-medium text-slate-700"
           >
             <option value="All">All Locations</option>
             <option value="Top Drawer">Top Drawer</option>
@@ -131,16 +131,16 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
 
           <button
             onClick={handleExpiringToggle}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
               showExpiringWithin7Days
-                ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 border-amber-200 shadow-sm'
+                : 'bg-white/70 backdrop-blur-sm text-slate-700 border-slate-200 hover:bg-slate-50'
             }`}
           >
             <Calendar className="w-4 h-4" />
             Expiring in 7 days
             {showExpiringWithin7Days && (
-              <span className="ml-1 px-1.5 py-0.5 bg-yellow-200 text-yellow-800 rounded text-xs font-semibold">ON</span>
+              <span className="ml-2 px-2 py-0.5 bg-gradient-to-r from-amber-200 to-orange-200 text-amber-800 rounded-lg text-xs font-semibold">ON</span>
             )}
           </button>
 
@@ -158,7 +158,7 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
                   showExpiringWithin7Days: false
                 });
               }}
-              className="text-sm text-gray-500 hover:text-gray-700 underline"
+              className="text-sm text-slate-500 hover:text-slate-700 font-medium px-3 py-2 rounded-lg hover:bg-slate-100 transition-all duration-200"
             >
               Clear filters
             </button>

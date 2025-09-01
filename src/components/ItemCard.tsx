@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import type { ItemWithStatus } from '../types';
 import StatusChip from './StatusChip';
-import Button from './ui/Button';
 
 interface ItemCardProps {
   item: ItemWithStatus;
@@ -17,57 +16,53 @@ export default function ItemCard({ item, onEdit, onDelete }: ItemCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 space-y-3 hover:shadow-md transition-shadow">
+    <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm p-6 space-y-4 hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-300 group">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-gray-900 truncate">
+          <h3 className="font-semibold text-slate-900 truncate text-lg group-hover:text-slate-700 transition-colors">
             {item.name}
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-600 mt-1 font-medium">
             Quantity: {item.quantity}
           </p>
         </div>
         <StatusChip status={item.status} size="sm" />
       </div>
       
-      <div className="space-y-1">
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <span>Expires:</span>
-          <span className={item.status === 'Expired' ? 'text-red-600 font-medium' : ''}>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-slate-500 font-medium">Expires:</span>
+          <span className={`font-semibold ${item.status === 'Expired' ? 'text-rose-600' : 'text-slate-700'}`}>
             {format(item.expiresOn, 'MMM dd, yyyy')}
           </span>
         </div>
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <span>Added:</span>
-          <span>{format(item.addedAt, 'MMM dd, yyyy')}</span>
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-slate-500 font-medium">Added:</span>
+          <span className="text-slate-700 font-semibold">{format(item.addedAt, 'MMM dd, yyyy')}</span>
         </div>
       </div>
 
       {item.notes && (
-        <div className="pt-2 border-t border-gray-100">
-          <p className="text-sm text-gray-600 italic">
+        <div className="pt-3 border-t border-slate-200/50">
+          <p className="text-sm text-slate-600 italic leading-relaxed">
             {item.notes}
           </p>
         </div>
       )}
 
-      <div className="flex space-x-2 pt-2">
-        <Button 
-          size="sm" 
-          variant="secondary"
+      <div className="flex space-x-3 pt-4">
+        <button
           onClick={() => onEdit(item)}
-          className="flex-1"
+          className="flex-1 bg-gradient-to-r from-slate-50 to-slate-100 hover:from-blue-50 hover:to-blue-100 text-slate-700 hover:text-blue-700 font-medium py-2.5 px-4 rounded-xl transition-all duration-200 border border-slate-200 hover:border-blue-200"
         >
           Edit
-        </Button>
-        <Button 
-          size="sm" 
-          variant="danger"
+        </button>
+        <button
           onClick={handleDelete}
-          className="flex-1"
+          className="flex-1 bg-gradient-to-r from-rose-50 to-red-50 hover:from-red-500 hover:to-red-600 text-rose-700 hover:text-white font-medium py-2.5 px-4 rounded-xl transition-all duration-200 border border-rose-200 hover:border-red-500"
         >
           Delete
-        </Button>
+        </button>
       </div>
     </div>
   );
