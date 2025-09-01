@@ -262,7 +262,6 @@ function App() {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 bg-clip-text text-transparent mb-3 tracking-tight">
               Milieu's Freezer
             </h1>
-            <p className="text-slate-600 text-lg font-medium">Manage your frozen items with professional precision</p>
           </div>
           
           <div className="mb-8">
