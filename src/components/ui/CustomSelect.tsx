@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 
 interface CustomSelectProps {
@@ -36,6 +36,13 @@ export default function CustomSelect({
 
   const selectedOption = options.find(option => option.value === value);
 
+  const handleOptionClick = useCallback((optionValue: string) => {
+    onChange(optionValue);
+    setIsOpen(false);
+    setActiveIndex(-1);
+    buttonRef.current?.focus();
+  }, [onChange]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
@@ -44,48 +51,11 @@ export default function CustomSelect({
       }
     };
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!isOpen) return;
-      
-      event.preventDefault();
-      
-      switch (event.key) {
-        case 'ArrowDown':
-          setActiveIndex(prev => prev < options.length - 1 ? prev + 1 : 0);
-          break;
-        case 'ArrowUp':
-          setActiveIndex(prev => prev > 0 ? prev - 1 : options.length - 1);
-          break;
-        case 'Enter':
-        case ' ':
-          if (activeIndex >= 0) {
-            onChange(options[activeIndex].value);
-            setIsOpen(false);
-            setActiveIndex(-1);
-            buttonRef.current?.focus();
-          }
-          break;
-        case 'Escape':
-          setIsOpen(false);
-          setActiveIndex(-1);
-          buttonRef.current?.focus();
-          break;
-        case 'Home':
-          setActiveIndex(0);
-          break;
-        case 'End':
-          setActiveIndex(options.length - 1);
-          break;
-      }
-    };
-
     document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, activeIndex, options, onChange]);
+  }, []);
   
   // Focus management for active option
   useEffect(() => {
@@ -94,12 +64,6 @@ export default function CustomSelect({
     }
   }, [activeIndex, isOpen]);
 
-  const handleOptionClick = (optionValue: string) => {
-    onChange(optionValue);
-    setIsOpen(false);
-    setActiveIndex(-1);
-    buttonRef.current?.focus();
-  };
   
   const handleButtonClick = () => {
     if (disabled) return;
@@ -110,6 +74,70 @@ export default function CustomSelect({
       setActiveIndex(currentIndex >= 0 ? currentIndex : 0);
     } else {
       setActiveIndex(-1);
+    }
+  };
+
+  const handleButtonKeyDown = (e: React.KeyboardEvent) => {
+    if (disabled) return;
+    
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (isOpen && activeIndex >= 0) {
+          // If dropdown is open and an option is highlighted, select it
+          handleOptionClick(options[activeIndex].value);
+        } else {
+          // Otherwise, open the dropdown
+          handleButtonClick();
+        }
+        break;
+        
+      case 'ArrowDown':
+        e.preventDefault();
+        if (!isOpen) {
+          setIsOpen(true);
+          const currentIndex = options.findIndex(opt => opt.value === value);
+          setActiveIndex(currentIndex >= 0 ? currentIndex : 0);
+        } else {
+          setActiveIndex(prev => prev < options.length - 1 ? prev + 1 : 0);
+        }
+        break;
+        
+      case 'ArrowUp':
+        e.preventDefault();
+        if (!isOpen) {
+          setIsOpen(true);
+          const currentIndex = options.findIndex(opt => opt.value === value);
+          setActiveIndex(currentIndex >= 0 ? currentIndex : options.length - 1);
+        } else {
+          setActiveIndex(prev => prev > 0 ? prev - 1 : options.length - 1);
+        }
+        break;
+        
+      case 'Escape':
+        if (isOpen) {
+          e.preventDefault();
+          setIsOpen(false);
+          setActiveIndex(-1);
+        }
+        break;
+        
+      case 'Home':
+        if (isOpen) {
+          e.preventDefault();
+          setActiveIndex(0);
+        }
+        break;
+        
+      case 'End':
+        if (isOpen) {
+          e.preventDefault();
+          setActiveIndex(options.length - 1);
+        }
+        break;
     }
   };
 
@@ -126,12 +154,7 @@ export default function CustomSelect({
           id={selectId}
           type="button"
           onClick={handleButtonClick}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleButtonClick();
-            }
-          }}
+          onKeyDown={handleButtonKeyDown}
           disabled={disabled}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
@@ -183,6 +206,12 @@ export default function CustomSelect({
                   aria-selected={option.value === value}
                   onClick={() => handleOptionClick(option.value)}
                   onMouseEnter={() => setActiveIndex(index)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleOptionClick(option.value);
+                    }
+                  }}
                   className={`
                     w-full px-4 py-3 text-left transition-colors duration-150
                     flex items-center justify-between font-medium whitespace-nowrap
