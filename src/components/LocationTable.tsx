@@ -166,7 +166,7 @@ export default function LocationTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200/50">
-            {items.map((item, index) => (
+            {items.map((item) => (
               <tr key={item.id} className="hover:bg-gradient-to-r hover:from-blue-50/30 hover:via-slate-50/50 hover:to-blue-50/20 transition-all duration-200 group">
                 <td className="px-4 py-3">
                   <input
