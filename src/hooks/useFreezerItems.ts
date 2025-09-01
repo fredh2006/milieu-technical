@@ -37,41 +37,104 @@ export function useFreezerItems() {
     }));
   }, [items]);
 
-  // CRUD operations
-  const addItem = useCallback(async (itemData: Omit<FreezerItem, 'id'>) => {
+  // CRUD operations with optimistic updates
+  const addItem = useCallback(async (itemData: Omit<FreezerItem, 'id'>, forceFailure = false) => {
+    // Create optimistic item with temporary ID
+    const optimisticItem: FreezerItem = {
+      ...itemData,
+      id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      addedAt: itemData.addedAt || new Date()
+    };
+
+    // Optimistically update UI
+    setItems(prevItems => [...prevItems, optimisticItem]);
+    setError(null);
+
     try {
-      setError(null);
-      const newItem = await repository.save(itemData);
-      setItems(prevItems => [...prevItems, newItem]);
-      return newItem;
+      // Attempt to save to repository
+      const savedItem = await repository.save(itemData, forceFailure);
+      
+      // Replace optimistic item with real item
+      setItems(prevItems => 
+        prevItems.map(item => 
+          item.id === optimisticItem.id ? savedItem : item
+        )
+      );
+      
+      return savedItem;
     } catch (err) {
+      // Rollback optimistic update
+      setItems(prevItems => 
+        prevItems.filter(item => item.id !== optimisticItem.id)
+      );
+      
       console.error('Failed to add item:', err);
       setError('Failed to add item');
       throw err;
     }
   }, []);
 
-  const updateItem = useCallback(async (id: string, updates: Partial<FreezerItem>) => {
+  const updateItem = useCallback(async (id: string, updates: Partial<FreezerItem>, forceFailure = false) => {
+    // Store original item for rollback
+    let originalItem: FreezerItem | undefined;
+    
+    // Optimistically update UI
+    setItems(prevItems => {
+      const newItems = prevItems.map(item => {
+        if (item.id === id) {
+          originalItem = item;
+          return { ...item, ...updates };
+        }
+        return item;
+      });
+      return newItems;
+    });
+    setError(null);
+
     try {
-      setError(null);
-      const updatedItem = await repository.update(id, updates);
+      // Attempt to update in repository
+      const updatedItem = await repository.update(id, updates, forceFailure);
+      
+      // Update with server response
       setItems(prevItems => 
         prevItems.map(item => item.id === id ? updatedItem : item)
       );
+      
       return updatedItem;
     } catch (err) {
+      // Rollback to original item
+      if (originalItem) {
+        setItems(prevItems => 
+          prevItems.map(item => item.id === id ? originalItem! : item)
+        );
+      }
+      
       console.error('Failed to update item:', err);
       setError('Failed to update item');
       throw err;
     }
   }, []);
 
-  const deleteItem = useCallback(async (id: string) => {
+  const deleteItem = useCallback(async (id: string, forceFailure = false) => {
+    // Store item for rollback
+    let deletedItem: FreezerItem | undefined;
+    
+    // Optimistically remove from UI
+    setItems(prevItems => {
+      deletedItem = prevItems.find(item => item.id === id);
+      return prevItems.filter(item => item.id !== id);
+    });
+    setError(null);
+
     try {
-      setError(null);
-      await repository.delete(id);
-      setItems(prevItems => prevItems.filter(item => item.id !== id));
+      // Attempt to delete from repository
+      await repository.delete(id, forceFailure);
     } catch (err) {
+      // Rollback - restore the deleted item
+      if (deletedItem) {
+        setItems(prevItems => [...prevItems, deletedItem!]);
+      }
+      
       console.error('Failed to delete item:', err);
       setError('Failed to delete item');
       throw err;

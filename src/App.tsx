@@ -8,6 +8,8 @@ import ItemForm from './components/ItemForm';
 import ErrorState from './components/ErrorState';
 import BulkActionsToolbar from './components/BulkActionsToolbar';
 import EmptyState from './components/EmptyState';
+import TestFailureButton from './components/TestFailureButton';
+import { useToast } from './components/ui/ToastContainer';
 import type { FreezerLocation } from './types';
 
 // Component wrapper to handle location-specific bulk selection
@@ -107,6 +109,7 @@ function LocationTableWrapper({
 function App() {
   const { items, loading, error, addItem, updateItem, deleteItem, bulkDeleteItems } = useFreezerItems();
   const [persistenceError, setPersistenceError] = useState<{ message: string; type: 'save' | 'delete' } | null>(null);
+  const { showToast } = useToast();
   const [filters, setFilters] = useState<SearchFilters>({
     searchTerm: '',
     statusFilter: 'All',
@@ -145,14 +148,17 @@ function App() {
     try {
       setPersistenceError(null);
       await deleteItem(id);
+      showToast('success', 'Item Deleted', 'Item has been successfully removed from your inventory.');
     } catch (error) {
       console.error('Failed to delete item:', error);
+      const message = error instanceof Error ? error.message : 'Unable to delete item. Please check your connection and try again.';
+      showToast('error', 'Delete Failed', message);
       setPersistenceError({ 
-        message: 'Unable to delete item. Please check your connection and try again.',
+        message,
         type: 'delete'
       });
     }
-  }, [deleteItem]);
+  }, [deleteItem, showToast]);
 
   const handleBulkDelete = useCallback(async () => {
     if (globalSelectedIds.length === 0) return;
@@ -180,21 +186,25 @@ function App() {
       setPersistenceError(null);
       if (editingItem) {
         await updateItem(editingItem.id, formData);
+        showToast('success', 'Item Updated', 'Your changes have been saved successfully.');
       } else {
         await addItem({
           ...formData,
           addedAt: new Date()
         });
+        showToast('success', 'Item Added', 'New item has been added to your inventory.');
       }
     } catch (error) {
       console.error('Failed to save item:', error);
+      const message = error instanceof Error ? error.message : 'Unable to save changes. Your data may not be persisted.';
+      showToast('error', 'Save Failed', message);
       setPersistenceError({ 
-        message: 'Unable to save changes. Your data may not be persisted.',
+        message,
         type: 'save'
       });
       throw error;
     }
-  }, [editingItem, updateItem, addItem]);
+  }, [editingItem, updateItem, addItem, showToast]);
 
   const handleFormClose = useCallback(() => {
     setIsFormOpen(false);
@@ -352,6 +362,19 @@ function App() {
         onClose={handleFormClose}
         onSubmit={handleFormSubmit}
         editItem={editingItem}
+      />
+
+      <TestFailureButton
+        items={filteredItems}
+        onAddItem={async (item, forceFailure) => {
+          await addItem(item, forceFailure);
+        }}
+        onUpdateItem={async (id, updates, forceFailure) => {
+          await updateItem(id, updates, forceFailure);
+        }}
+        onDeleteItem={async (id, forceFailure) => {
+          await deleteItem(id, forceFailure);
+        }}
       />
     </div>
   );

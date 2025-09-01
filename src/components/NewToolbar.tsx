@@ -15,7 +15,7 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
   const [statusFilter, setStatusFilter] = useState<ItemStatus | 'All'>('All');
   const [locationFilter, setLocationFilter] = useState<FreezerLocation | 'All'>('All');
   const [showExpiringWithin7Days, setShowExpiringWithin7Days] = useState(false);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const debouncedOnFiltersChange = useCallback((filters: SearchFilters) => {
     if (debounceRef.current) {

@@ -9,6 +9,23 @@ export class FreezerRepository {
     return `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
+  private shouldSimulateFailure(forceFailure = false): boolean {
+    // Only simulate failures in development mode
+    if (!import.meta.env.DEV) return false;
+    
+    // If forceFailure is true (from test buttons), always fail
+    if (forceFailure) return true;
+    
+    // For normal operations, never fail
+    return false;
+  }
+
+  private async simulateNetworkDelay(): Promise<void> {
+    // Add realistic network delay
+    const delay = Math.random() * 1000 + 500; // 500-1500ms
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
   private getItemKey(id: string): string {
     return `${FreezerRepository.STORE_KEY}-${id}`;
   }
@@ -58,7 +75,13 @@ export class FreezerRepository {
     }
   }
 
-  async save(itemData: Omit<FreezerItem, 'id'>): Promise<FreezerItem> {
+  async save(itemData: Omit<FreezerItem, 'id'>, forceFailure = false): Promise<FreezerItem> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateFailure(forceFailure)) {
+      throw new Error('Network error: Failed to save item. Please try again.');
+    }
+
     try {
       const id = this.generateId();
       const item: FreezerItem = {
@@ -80,7 +103,13 @@ export class FreezerRepository {
     }
   }
 
-  async update(id: string, updates: Partial<FreezerItem>): Promise<FreezerItem> {
+  async update(id: string, updates: Partial<FreezerItem>, forceFailure = false): Promise<FreezerItem> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateFailure(forceFailure)) {
+      throw new Error('Network error: Failed to update item. Please try again.');
+    }
+
     try {
       const existingItem = await this.getById(id);
       if (!existingItem) {
@@ -106,7 +135,13 @@ export class FreezerRepository {
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, forceFailure = false): Promise<void> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateFailure(forceFailure)) {
+      throw new Error('Network error: Failed to delete item. Please try again.');
+    }
+
     try {
       await del(this.getItemKey(id));
     } catch (error) {
