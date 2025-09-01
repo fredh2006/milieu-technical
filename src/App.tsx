@@ -191,13 +191,39 @@ function App() {
           />
           
           <div className="space-y-6">
-            {(['Top Drawer', 'Bottom Drawer', 'Door'] as FreezerLocation[]).map((location) => {
-              const locationItems = filteredItems.filter(item => item.location === location);
-              return viewMode === 'table' ? (
+            {filters.locationFilter === 'All' ? (
+              (['Top Drawer', 'Bottom Drawer', 'Door'] as FreezerLocation[]).map((location) => {
+                const locationItems = filteredItems.filter(item => item.location === location);
+                return viewMode === 'table' ? (
+                  <LocationTable
+                    key={location}
+                    location={location}
+                    items={locationItems}
+                    onEditItem={handleEditItem}
+                    onDeleteItem={handleDeleteItem}
+                    onAddItem={handleAddItem}
+                    selectedIds={selectedIds}
+                    onToggleItem={toggleItem}
+                    onToggleAll={toggleAll}
+                    isAllSelected={isAllSelected}
+                    isPartiallySelected={isPartiallySelected}
+                  />
+                ) : (
+                  <LocationGrid
+                    key={location}
+                    location={location}
+                    items={locationItems}
+                    onEditItem={handleEditItem}
+                    onDeleteItem={handleDeleteItem}
+                    onAddItem={handleAddItem}
+                  />
+                );
+              })
+            ) : (
+              viewMode === 'table' ? (
                 <LocationTable
-                  key={location}
-                  location={location}
-                  items={locationItems}
+                  location={filters.locationFilter as FreezerLocation}
+                  items={filteredItems}
                   onEditItem={handleEditItem}
                   onDeleteItem={handleDeleteItem}
                   onAddItem={handleAddItem}
@@ -209,15 +235,14 @@ function App() {
                 />
               ) : (
                 <LocationGrid
-                  key={location}
-                  location={location}
-                  items={locationItems}
+                  location={filters.locationFilter as FreezerLocation}
+                  items={filteredItems}
                   onEditItem={handleEditItem}
                   onDeleteItem={handleDeleteItem}
                   onAddItem={handleAddItem}
                 />
-              );
-            })}
+              )
+            )}
           </div>
         </div>
       </main>
