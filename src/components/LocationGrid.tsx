@@ -3,6 +3,8 @@ import { format } from 'date-fns';
 import { Edit2, Trash2, Calendar, Package } from 'lucide-react';
 import StatusChip from './StatusChip';
 import EmptyState from './EmptyState';
+import Pagination from './ui/Pagination';
+import { usePagination } from '../hooks/usePagination';
 
 interface LocationGridProps {
   location: FreezerLocation;
@@ -32,6 +34,7 @@ export default function LocationGrid({
   totalItemsCount = 0,
   onClearFilters
 }: LocationGridProps) {
+  const pagination = usePagination(items, { itemsPerPage: 5 });
 
   const getEmptyStateType = (): string => {
     // If there are no items in the entire freezer
@@ -86,7 +89,7 @@ export default function LocationGrid({
         </div>
         <div className="p-4">
           <EmptyState
-            type={getEmptyStateType() as any}
+            type={getEmptyStateType()}
             location={location}
             searchTerm={searchTerm}
             statusFilter={statusFilter}
@@ -111,7 +114,7 @@ export default function LocationGrid({
       </div>
       <div className="p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          {items.map((item) => (
+          {pagination.paginatedItems.map((item) => (
             <div key={item.id} className="bg-gradient-to-br from-white/80 via-slate-50/60 to-blue-50/40 backdrop-blur-xl rounded-xl p-4 hover:shadow-lg transition-all duration-200 border border-gray-300/60 group hover:scale-[1.01]">
               <div className="flex justify-between items-start mb-3">
                 <h4 className="font-semibold text-slate-900 text-sm leading-tight pr-2">{item.name}</h4>
@@ -155,6 +158,18 @@ export default function LocationGrid({
           ))}
         </div>
       </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onNextPage={pagination.nextPage}
+        onPreviousPage={pagination.previousPage}
+        onGoToPage={pagination.goToPage}
+        hasNextPage={pagination.hasNextPage}
+        hasPreviousPage={pagination.hasPreviousPage}
+        startIndex={pagination.startIndex}
+        endIndex={pagination.endIndex}
+        totalItems={items.length}
+      />
     </div>
   );
 }

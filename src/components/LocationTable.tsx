@@ -3,6 +3,8 @@ import { format } from 'date-fns';
 import { Edit2, Trash2 } from 'lucide-react';
 import StatusChip from './StatusChip';
 import EmptyState from './EmptyState';
+import Pagination from './ui/Pagination';
+import { usePagination } from '../hooks/usePagination';
 
 interface LocationTableProps {
   location: FreezerLocation;
@@ -43,6 +45,7 @@ export default function LocationTable({
   onClearFilters,
   onAddItem
 }: LocationTableProps) {
+  const pagination = usePagination(items, { itemsPerPage: 5 });
 
   const getEmptyStateType = (): string => {
     // If there are no items in the entire freezer
@@ -97,7 +100,7 @@ export default function LocationTable({
         </div>
         <div className="p-4">
           <EmptyState
-            type={getEmptyStateType() as any}
+            type={getEmptyStateType()}
             location={location}
             searchTerm={searchTerm}
             statusFilter={statusFilter}
@@ -166,7 +169,7 @@ export default function LocationTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200/50">
-            {items.map((item) => (
+            {pagination.paginatedItems.map((item) => (
               <tr key={item.id} className="hover:bg-gradient-to-r hover:from-blue-50/30 hover:via-slate-50/50 hover:to-blue-50/20 transition-all duration-200 group">
                 <td className="px-4 py-3">
                   <input
@@ -222,6 +225,18 @@ export default function LocationTable({
           </tbody>
         </table>
       </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onNextPage={pagination.nextPage}
+        onPreviousPage={pagination.previousPage}
+        onGoToPage={pagination.goToPage}
+        hasNextPage={pagination.hasNextPage}
+        hasPreviousPage={pagination.hasPreviousPage}
+        startIndex={pagination.startIndex}
+        endIndex={pagination.endIndex}
+        totalItems={items.length}
+      />
     </div>
   );
 }
