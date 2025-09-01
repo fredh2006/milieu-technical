@@ -2,7 +2,6 @@ import { get, set, del, keys } from 'idb-keyval';
 import type { FreezerItem } from '../types';
 
 export class FreezerRepository {
-  private static readonly DB_NAME = 'freezer-inventory';
   private static readonly STORE_KEY = 'items';
 
   private generateId(): string {

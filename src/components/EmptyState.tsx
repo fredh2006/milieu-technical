@@ -19,8 +19,6 @@ export default function EmptyState({
   locationFilter, 
   location,
   showExpiringWithin7Days,
-  totalItemsCount = 0,
-  onAction, 
   onAddItem 
 }: EmptyStateProps) {
   const getConfig = () => {
