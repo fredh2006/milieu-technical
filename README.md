@@ -1,69 +1,198 @@
-# React + TypeScript + Vite
+# Milieu's Freezer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Technical for Milieu. 
 
-Currently, two official plugins are available:
+### Prerequisites
+- Node.js (v16 or higher)
+- npm
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Development Mode
+```bash
+# Install dependencies
+npm install
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Architecture & Design Decisions
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **`useFreezerItems`**: Core CRUD operations with optimistic updates
+- **`useFilteredItems`**: Memoized filtering logic
+- **`useBulkSelection`**: Selection state management
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+This approach provides better performance and type safety while keeping the codebase simple.
+
+### Memoization Strategy
+Strategic use of `useMemo` and `useCallback` to prevent unnecessary re-renders:
+
+```typescript
+// Memoized status calculation - only recalculates when items change
+const itemsWithStatus = useMemo((): ItemWithStatus[] => {
+  return items.map(item => ({
+    ...item,
+    status: calculateStatus(item.expiresOn)
+  }));
+}, [items]);
+
+// Memoized filtering - only recalculates when items or filters change
+const filteredItems = useMemo(() => {
+  return items.filter(item => {
+    // Complex filtering logic
+  });
+}, [items, filters]);
+```
+
+**Why memoize here?**
+- Status calculation runs for every item on every render
+- Filtering can be expensive with large inventories
+- Prevents cascading re-renders in child components
+
+### Status Calculation Logic
+Items are automatically categorized based on expiration dates:
+
+```typescript
+export function calculateStatus(expiresOn: Date): ItemStatus {
+  const now = new Date();
+  const timeDiff = expiresOn.getTime() - now.getTime();
+  const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  
+  if (daysDiff < 0) return 'Expired';
+  if (daysDiff <= 7) return 'Expiring Soon';
+  return 'Fresh';
+}
+```
+
+- **Expired**: Past expiration date
+- **Expiring Soon**: Within 7 days
+- **Fresh**: More than 7 days remaining
+
+## 🔄 Optimistic Updates & Error Handling
+
+### Optimistic UI Pattern
+All write operations (add, update, delete) use optimistic updates:
+
+1. **Immediate UI update** - Changes appear instantly
+2. **Background API call** - Actual operation happens asynchronously
+3. **Success**: UI stays updated
+4. **Failure**: UI reverts to previous state + shows error toast
+
+```typescript
+const addItem = useCallback(async (itemData, forceFailure = false) => {
+  // 1. Optimistically add to UI
+  setItems(prevItems => [...prevItems, optimisticItem]);
+  
+  try {
+    // 2. Attempt to save
+    const savedItem = await repository.save(itemData, forceFailure);
+    // 3. Replace optimistic with real data
+    setItems(prevItems => 
+      prevItems.map(item => 
+        item.id === optimisticItem.id ? savedItem : item
+      )
+    );
+  } catch (err) {
+    // 4. Rollback on failure
+    setItems(prevItems => 
+      prevItems.filter(item => item.id !== optimisticItem.id)
+    );
+    throw err;
+  }
+}, []);
+```
+
+### Failure Simulation (Dev Mode Only)
+In development, test buttons in the bottom-left corner simulate network failures:
+- **Normal operations** work perfectly
+- **Test buttons** always fail to demonstrate rollback behavior
+- Simulated network delays (500-1500ms) for realistic testing
+
+## 📱 Performance Optimizations
+
+### Component-Level Optimizations
+- **React.memo** for expensive components
+- **useCallback** for stable function references
+- **useMemo** for expensive calculations
+- **Virtualization-ready** architecture for large datasets
+
+### Data Management
+- **IndexedDB** for client-side persistence
+- **Debounced search** (300ms) to reduce filter operations
+- **Efficient filtering** with early returns
+- **Minimal re-renders** through careful dependency arrays
+
+### Bundle Optimization
+- **Tree-shaking** with ES modules
+- **Code splitting** ready (dynamic imports)
+- **Optimized builds** with Vite
+
+## ♿ Accessibility Features
+
+### Keyboard Navigation
+- **Tab/Shift+Tab**: Navigate through all interactive elements
+- **Enter/Space**: Activate buttons and form controls
+- **Escape**: Close modals and dropdowns
+- **Arrow keys**: Navigate dropdown options
+- **Home/End**: Jump to first/last options in dropdowns
+
+### Screen Reader Support
+- **Semantic HTML**: Proper use of headings, lists, and landmarks
+- **ARIA labels**: Descriptive labels for all interactive elements
+- **ARIA live regions**: Status updates announced to screen readers
+- **ARIA states**: `aria-expanded`, `aria-selected`, `aria-pressed`
+- **Role attributes**: `dialog`, `toolbar`, `status`, `listbox`
+
+### Focus Management
+- **Visible focus indicators** on all interactive elements
+- **Focus trapping** in modals
+- **Focus restoration** when closing modals
+- **Skip links** for keyboard users
+
+### Examples of Accessibility Implementation:
+
+```tsx
+// Modal with proper ARIA attributes and focus management
+<div 
+  role="dialog" 
+  aria-modal="true" 
+  aria-labelledby="modal-title"
+  tabIndex={-1}
+  ref={modalRef}
+>
+
+// Button with descriptive label
+<button
+  onClick={onDelete}
+  aria-label={`Delete ${item.name}`}
+  className="focus:outline-none focus:ring-2 focus:ring-red-500/50"
+>
+
+// Status with screen reader context
+<span 
+  role="status"
+  aria-label={`Status: ${status}`}
+>
+  {status}
+</span>
+
+// Time elements with proper datetime attributes
+<time 
+  className="font-semibold" 
+  dateTime={item.expiresOn.toISOString()}
+>
+  {format(item.expiresOn, 'MMM dd, yyyy')}
+</time>
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── ui/             # Reusable UI components
+│   └── ...             # Feature components
+├── hooks/              # Custom React hooks
+├── lib/                # Utilities and business logic
+├── types/              # TypeScript type definitions
+└── main.tsx           # Application entry point
 ```

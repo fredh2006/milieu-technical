@@ -1,0 +1,39 @@
+I used Claude Code with Claude Opus and Claude Sonnet
+
+First prompt (Message):
+    - Plan this build out (I gave it the overview, entities, and requirements)
+First prompt (Return):
+    - FREEZER_INVENTORY_PLAN.md
+
+Second prompt (Message):
+    - Implement this up until Phase 6
+Second prompt (Return):
+    - It implemented it as asked.
+
+Third prompt (Message):
+    - Add empty state cases and visuals
+Third prompt (Return):
+    - It implemented and added empty state. It created EmptyState
+
+Fourth prompt (Message):
+    - Additionally, add a grid view for the tables as well
+Fourth prompt (Return):
+    - It added the table
+
+Fifth prompt (Message):
+    - Add keyboard accessibility using Tabs and Enters
+Fifth prompt (Return):
+    - It added the keyboard accesibility to the Toolbars, ItemCard, LocationTable, and Chips
+
+Sixth prompt (Message):
+    - Simulate network failures and rollbacks for edit, add, and delete
+Sixth prompt (Return):
+    - It created TestApp and TestFailure.
+
+Seventh prompt (Message):
+    - Remove any unnecessary files and imports
+Seventh prompt (Return):
+    - It removed some unnecessary files and imports
+
+The styling was done by me giving instructions, and it implementing it. I went in and changed lots 
+of the padding, margins, formats, and colours myself to my liking though.
