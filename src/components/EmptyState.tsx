@@ -1,4 +1,4 @@
-import { Package, Search, Filter, MapPin, Calendar } from 'lucide-react';
+import { Package, Search } from 'lucide-react';
 
 interface EmptyStateProps {
   type: 'no-items' | 'no-results' | 'filter-empty' | 'location-empty' | 'search-only' | 'status-filter' | 'date-filter';

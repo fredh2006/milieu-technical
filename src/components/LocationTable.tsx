@@ -1,6 +1,6 @@
 import type { ItemWithStatus, FreezerLocation } from '../types';
 import { format } from 'date-fns';
-import { ChevronUp, Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 import StatusChip from './StatusChip';
 import EmptyState from './EmptyState';
 

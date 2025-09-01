@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { SearchFilters, ItemStatus, FreezerLocation } from '../types';
-import { Upload, Search, Filter, Tag, BarChart3, Menu, Grid, Calendar } from 'lucide-react';
+import { Upload, Search, Menu, Grid, Calendar } from 'lucide-react';
 import CustomSelect from './ui/CustomSelect';
 
 interface NewToolbarProps {
