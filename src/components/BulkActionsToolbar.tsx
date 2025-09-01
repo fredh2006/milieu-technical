@@ -15,7 +15,7 @@ export default function BulkActionsToolbar({
 
   return (
     <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-      <div className="bg-white/90 backdrop-blur-xl rounded-2xl px-6 py-3 shadow-2xl border border-white/20 shadow-slate-900/10">
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl px-6 py-3 shadow-2xl border border-slate-300/60 shadow-slate-900/10">
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-pulse"></div>

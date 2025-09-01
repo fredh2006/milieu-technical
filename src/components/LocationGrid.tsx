@@ -77,14 +77,14 @@ export default function LocationGrid({
 
   if (items.length === 0) {
     return (
-      <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-300/40 overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-300/60 bg-gradient-to-r from-slate-50/50 to-white/50">
+      <div className="bg-gradient-to-br from-white/90 via-slate-50/40 to-blue-50/20 backdrop-blur-xl rounded-3xl shadow-xl border border-white/40 overflow-hidden hover:shadow-2xl transition-all duration-500">
+        <div className="px-6 py-4 border-b border-slate-200/60 bg-gradient-to-r from-slate-100/60 via-white/50 to-blue-50/40 backdrop-blur-sm">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">{location}</h3>
-            <span className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full font-medium">0 items</span>
+            <h3 className="text-lg font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 bg-clip-text text-transparent tracking-tight">{location}</h3>
+            <span className="text-sm text-slate-600 bg-gradient-to-r from-slate-200/80 to-slate-100/60 px-3 py-1.5 rounded-full font-bold border border-slate-300/30 shadow-sm">0 items</span>
           </div>
         </div>
-        <div className="p-6">
+        <div className="p-4">
           <EmptyState
             type={getEmptyStateType() as any}
             location={location}
@@ -102,53 +102,53 @@ export default function LocationGrid({
   }
 
   return (
-    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-300/40 overflow-hidden">
-      <div className="px-6 py-5 border-b border-slate-300/60 bg-gradient-to-r from-slate-50/50 to-white/50">
+    <div className="bg-gradient-to-br from-white/90 via-slate-50/40 to-blue-50/20 backdrop-blur-xl rounded-3xl shadow-xl border border-white/40 overflow-hidden hover:shadow-2xl transition-all duration-500">
+      <div className="px-6 py-4 border-b border-slate-200/60 bg-gradient-to-r from-slate-100/60 via-white/50 to-blue-50/40 backdrop-blur-sm">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">{location}</h3>
-          <span className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full font-medium">{items.length} items</span>
+          <h3 className="text-lg font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 bg-clip-text text-transparent tracking-tight">{location}</h3>
+          <span className="text-sm text-slate-600 bg-gradient-to-r from-slate-200/80 to-slate-100/60 px-3 py-1.5 rounded-full font-bold border border-slate-300/30 shadow-sm">{items.length} items</span>
         </div>
       </div>
       <div className="p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           {items.map((item) => (
-            <div key={item.id} className="bg-gradient-to-br from-white/60 to-slate-50/60 backdrop-blur-sm rounded-xl p-5 hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-300 border border-slate-300/60 hover:border-slate-400/70 group">
+            <div key={item.id} className="bg-gradient-to-br from-white/80 via-slate-50/60 to-blue-50/40 backdrop-blur-xl rounded-xl p-4 hover:shadow-lg transition-all duration-200 border border-gray-300/60 group hover:scale-[1.01]">
               <div className="flex justify-between items-start mb-3">
                 <h4 className="font-semibold text-slate-900 text-sm leading-tight pr-2">{item.name}</h4>
                 <StatusChip status={item.status} size="xs" />
               </div>
               
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2 text-xs text-slate-600">
-                  <Package className="w-3.5 h-3.5 text-slate-400" />
+              <div className="space-y-2 mb-3">
+                <div className="flex items-center gap-2 text-xs text-slate-700">
+                  <Package className="w-3.5 h-3.5 text-slate-500" />
                   <span className="font-medium">Qty: {item.quantity}</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-600">
-                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                <div className="flex items-center gap-2 text-xs text-slate-700">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" />
                   <span className="font-medium">Expires: {format(item.expiresOn, 'MMM d')}</span>
                 </div>
               </div>
 
               {item.notes && (
-                <div className="text-xs text-slate-500 italic mb-4 line-clamp-2 leading-relaxed" title={item.notes}>
-                  {item.notes.length > 60 ? `${item.notes.substring(0, 60)}...` : item.notes}
+                <div className="text-xs text-slate-600 mb-3 line-clamp-2 leading-relaxed bg-slate-100/50 rounded-lg p-2 border border-slate-200/40" title={item.notes}>
+                  {item.notes.length > 50 ? `${item.notes.substring(0, 50)}...` : item.notes}
                 </div>
               )}
 
-              <div className="flex gap-2 justify-end pt-2 border-t border-slate-300/40">
+              <div className="flex gap-1 justify-end pt-2 border-t border-slate-200/40">
                 <button
                   onClick={() => onEditItem(item)}
-                  className="text-slate-400 hover:text-blue-600 p-1.5 rounded-lg hover:bg-blue-50 transition-all duration-200"
+                  className="text-slate-500 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-100/60 transition-all duration-200"
                   title="Edit"
                 >
-                  <Edit2 className="w-4 h-4" />
+                  <Edit2 className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => onDeleteItem(item.id)}
-                  className="text-slate-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-all duration-200"
+                  className="text-slate-500 hover:text-red-600 p-2 rounded-lg hover:bg-red-100/60 transition-all duration-200"
                   title="Delete"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>

@@ -244,33 +244,34 @@ function App() {
   const freshItems = items.filter(item => item.status === 'Fresh').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      <main className="px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/50 relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
+      <main className="relative px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 bg-clip-text text-transparent mb-3 tracking-tight">
               Milieu's Freezer
             </h1>
-            <p className="text-slate-600">Manage your frozen items with ease</p>
+            <p className="text-slate-600 text-lg font-medium">Manage your frozen items with professional precision</p>
           </div>
           
           <div className="mb-8">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-              <div className="bg-white/70 backdrop-blur-sm rounded-xl p-5 shadow-sm border border-white/20 hover:shadow-md transition-shadow">
-                <div className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Total Items</div>
-                <div className="text-2xl font-bold text-slate-900">{totalItems}</div>
+              <div className="bg-gradient-to-br from-white/90 via-slate-50/50 to-blue-50/30 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/30 hover:shadow-xl hover:border-blue-200/40 transition-all duration-300 group">
+                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Total Items</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent group-hover:from-slate-900 group-hover:to-blue-800 transition-all duration-300">{totalItems}</div>
               </div>
-              <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-5 shadow-sm border border-emerald-100 hover:shadow-md transition-shadow">
-                <div className="text-xs font-medium text-emerald-700 uppercase tracking-wide mb-1">Fresh</div>
-                <div className="text-2xl font-bold text-emerald-700">{freshItems}</div>
+              <div className="bg-gradient-to-br from-emerald-100/80 via-green-50 to-teal-50/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-emerald-200/50 hover:shadow-xl hover:border-emerald-300/60 transition-all duration-300 group">
+                <div className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2">Fresh</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-emerald-700 to-teal-600 bg-clip-text text-transparent group-hover:from-emerald-800 group-hover:to-teal-700 transition-all duration-300">{freshItems}</div>
               </div>
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 shadow-sm border border-amber-100 hover:shadow-md transition-shadow">
-                <div className="text-xs font-medium text-amber-700 uppercase tracking-wide mb-1">Expiring Soon</div>
-                <div className="text-2xl font-bold text-amber-700">{expiringItems}</div>
+              <div className="bg-gradient-to-br from-amber-100/80 via-orange-50 to-yellow-50/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-amber-200/50 hover:shadow-xl hover:border-amber-300/60 transition-all duration-300 group">
+                <div className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">Expiring Soon</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent group-hover:from-amber-800 group-hover:to-orange-700 transition-all duration-300">{expiringItems}</div>
               </div>
-              <div className="bg-gradient-to-br from-rose-50 to-red-50 rounded-xl p-5 shadow-sm border border-rose-100 hover:shadow-md transition-shadow">
-                <div className="text-xs font-medium text-rose-700 uppercase tracking-wide mb-1">Expired</div>
-                <div className="text-2xl font-bold text-rose-700">{expiredItems}</div>
+              <div className="bg-gradient-to-br from-rose-100/80 via-red-50 to-pink-50/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-rose-200/50 hover:shadow-xl hover:border-rose-300/60 transition-all duration-300 group">
+                <div className="text-xs font-bold text-rose-800 uppercase tracking-wider mb-2">Expired</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-rose-700 to-red-600 bg-clip-text text-transparent group-hover:from-rose-800 group-hover:to-red-700 transition-all duration-300">{expiredItems}</div>
               </div>
             </div>
             

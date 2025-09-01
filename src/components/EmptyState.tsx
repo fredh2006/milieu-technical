@@ -92,15 +92,12 @@ export default function EmptyState({
   const config = getConfig();
 
   return (
-    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/20 py-12">
+    <div className="bg-gradient-to-br from-white/80 via-slate-50/40 to-blue-50/30 backdrop-blur-xl rounded-2xl shadow-lg border border-white/40 py-8">
       <div className="text-center max-w-md mx-auto px-6">
-        <div className="flex justify-center mb-4">
-          {config.icon}
-        </div>
-        <h3 className="text-lg font-semibold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-2">
+        <h3 className="text-lg font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 bg-clip-text text-transparent mb-3 tracking-tight">
           {config.title}
         </h3>
-        <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+        <p className="text-sm text-slate-700 mb-6 leading-relaxed">
           {config.description}
         </p>
         {config.showAction && config.action && (
