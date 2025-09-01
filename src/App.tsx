@@ -7,6 +7,7 @@ import LocationGrid from './components/LocationGrid';
 import ItemForm from './components/ItemForm';
 import ErrorState from './components/ErrorState';
 import BulkActionsToolbar from './components/BulkActionsToolbar';
+import EmptyState from './components/EmptyState';
 import type { FreezerLocation } from './types';
 
 // Component wrapper to handle location-specific bulk selection
@@ -18,7 +19,10 @@ function LocationTableWrapper({
   onAddItem, 
   viewMode,
   globalToggleItem,
-  globalSelectedIds
+  globalSelectedIds,
+  filters,
+  totalItemsCount,
+  onClearFilters
 }: {
   location: FreezerLocation;
   items: ItemWithStatus[];
@@ -28,6 +32,9 @@ function LocationTableWrapper({
   viewMode: 'table' | 'grid';
   globalToggleItem: (id: string) => void;
   globalSelectedIds: string[];
+  filters: SearchFilters;
+  totalItemsCount: number;
+  onClearFilters: () => void;
 }) {
   const locationSelectedIds = globalSelectedIds.filter(id => 
     items.some(item => item.id === id)
@@ -73,6 +80,12 @@ function LocationTableWrapper({
       onToggleAll={toggleAll}
       isAllSelected={isAllSelected}
       isPartiallySelected={isPartiallySelected}
+      searchTerm={filters.searchTerm}
+      statusFilter={filters.statusFilter}
+      locationFilter={filters.locationFilter}
+      showExpiringWithin7Days={filters.showExpiringWithin7Days}
+      totalItemsCount={totalItemsCount}
+      onClearFilters={onClearFilters}
     />
   ) : (
     <LocationGrid
@@ -81,6 +94,12 @@ function LocationTableWrapper({
       onEditItem={onEditItem}
       onDeleteItem={onDeleteItem}
       onAddItem={onAddItem}
+      searchTerm={filters.searchTerm}
+      statusFilter={filters.statusFilter}
+      locationFilter={filters.locationFilter}
+      showExpiringWithin7Days={filters.showExpiringWithin7Days}
+      totalItemsCount={totalItemsCount}
+      onClearFilters={onClearFilters}
     />
   );
 }
@@ -182,6 +201,14 @@ function App() {
     setEditingItem(undefined);
   }, []);
 
+  const handleClearFilters = useCallback(() => {
+    setFilters({
+      searchTerm: '',
+      statusFilter: 'All',
+      locationFilter: 'All',
+      showExpiringWithin7Days: false
+    });
+  }, []);
 
   const handleRetry = useCallback(() => {
     setPersistenceError(null);
@@ -222,7 +249,7 @@ function App() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-2">
-              Freezer Inventory
+              Milieu's Freezer
             </h1>
             <p className="text-slate-600">Manage your frozen items with ease</p>
           </div>
@@ -271,35 +298,51 @@ function App() {
             onClearSelection={globalClearSelection}
           />
           
-          <div className="space-y-8">
-            {filters.locationFilter === 'All' ? (
-              (['Top Drawer', 'Bottom Drawer', 'Door'] as FreezerLocation[]).map((location) => {
-                const locationItems = filteredItems.filter(item => item.location === location);
-                return <LocationTableWrapper
-                  key={location}
-                  location={location}
-                  items={locationItems}
+          {items.length === 0 ? (
+            <div className="mt-8">
+              <EmptyState
+                type="no-items"
+                totalItemsCount={items.length}
+                onAddItem={handleAddItem}
+              />
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {filters.locationFilter === 'All' ? (
+                (['Top Drawer', 'Bottom Drawer', 'Door'] as FreezerLocation[]).map((location) => {
+                  const locationItems = filteredItems.filter(item => item.location === location);
+                  return <LocationTableWrapper
+                    key={location}
+                    location={location}
+                    items={locationItems}
+                    onEditItem={handleEditItem}
+                    onDeleteItem={handleDeleteItem}
+                    onAddItem={handleAddItem}
+                    viewMode={viewMode}
+                    globalToggleItem={globalToggleItem}
+                    globalSelectedIds={globalSelectedIds}
+                    filters={filters}
+                    totalItemsCount={items.length}
+                    onClearFilters={handleClearFilters}
+                  />;
+                })
+              ) : (
+                <LocationTableWrapper
+                  location={filters.locationFilter as FreezerLocation}
+                  items={filteredItems}
                   onEditItem={handleEditItem}
                   onDeleteItem={handleDeleteItem}
                   onAddItem={handleAddItem}
                   viewMode={viewMode}
                   globalToggleItem={globalToggleItem}
                   globalSelectedIds={globalSelectedIds}
-                />;
-              })
-            ) : (
-              <LocationTableWrapper
-                location={filters.locationFilter as FreezerLocation}
-                items={filteredItems}
-                onEditItem={handleEditItem}
-                onDeleteItem={handleDeleteItem}
-                onAddItem={handleAddItem}
-                viewMode={viewMode}
-                globalToggleItem={globalToggleItem}
-                globalSelectedIds={globalSelectedIds}
-              />
-            )}
-          </div>
+                  filters={filters}
+                  totalItemsCount={items.length}
+                  onClearFilters={handleClearFilters}
+                />
+              )}
+            </div>
+          )}
         </div>
       </main>
 

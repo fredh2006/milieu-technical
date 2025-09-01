@@ -4,7 +4,7 @@ import type { ItemWithStatus, ItemFormData, FreezerLocation } from '../types';
 import { FREEZER_LOCATIONS } from '../lib/constants';
 import Button from './ui/Button';
 import Input from './ui/Input';
-import Select from './ui/Select';
+import CustomSelect from './ui/CustomSelect';
 import Modal from './ui/Modal';
 
 interface ItemFormProps {
@@ -118,7 +118,7 @@ export default function ItemForm({
           value={formData.name}
           onChange={(e) => handleInputChange('name', e.target.value)}
           error={errors.name}
-          placeholder="e.g., Frozen Chicken Breast"
+          placeholder="Frozen Chicken Breast"
         />
 
         <div className="grid grid-cols-2 gap-4">
@@ -131,10 +131,10 @@ export default function ItemForm({
             error={errors.quantity}
           />
 
-          <Select
+          <CustomSelect
             label="Location *"
             value={formData.location}
-            onChange={(e) => handleInputChange('location', e.target.value as FreezerLocation)}
+            onChange={(value) => handleInputChange('location', value as FreezerLocation)}
             options={locationOptions}
             error={errors.location}
           />
@@ -149,7 +149,7 @@ export default function ItemForm({
         />
 
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Notes
           </label>
           <textarea
@@ -157,20 +157,11 @@ export default function ItemForm({
             onChange={(e) => handleInputChange('notes', e.target.value)}
             placeholder="Optional notes about the item..."
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-3 border border-slate-200 rounded-xl shadow-sm bg-white/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all duration-200 placeholder:text-slate-400"
           />
         </div>
 
         <div className="flex space-x-3 pt-4">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onClose}
-            disabled={isSubmitting}
-            className="flex-1"
-          >
-            Cancel
-          </Button>
           <Button
             type="submit"
             disabled={isSubmitting}

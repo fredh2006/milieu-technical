@@ -58,22 +58,22 @@ export default function Modal({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-screen items-center justify-center p-4">
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-black/40 backdrop-blur-md transition-all duration-300"
           onClick={onClose}
         />
-        <div className={`relative bg-white rounded-lg shadow-2xl w-full ${maxWidthClasses[maxWidth]} z-10 transform transition-all`}>
-          <div className="flex items-center justify-between p-6 border-b">
-            <h2 className="text-lg font-semibold text-gray-900">
+        <div className={`relative bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 w-full ${maxWidthClasses[maxWidth]} z-10 transform transition-all duration-300 animate-in fade-in-0 zoom-in-95`}>
+          <div className="flex items-center justify-between p-6 border-b border-slate-200/60">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
               {title}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100"
+              className="text-black hover:text-red-400 transition-all duration-200 p-2"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
-          <div className="p-6">
+          <div className="p-6 bg-gradient-to-br from-white/90 to-slate-50/50 rounded-b-2xl backdrop-blur-sm">
             {children}
           </div>
         </div>

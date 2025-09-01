@@ -2,6 +2,7 @@ import type { ItemWithStatus, FreezerLocation } from '../types';
 import { format } from 'date-fns';
 import { Edit2, Trash2, Calendar, Package } from 'lucide-react';
 import StatusChip from './StatusChip';
+import EmptyState from './EmptyState';
 
 interface LocationGridProps {
   location: FreezerLocation;
@@ -9,20 +10,92 @@ interface LocationGridProps {
   onEditItem: (item: ItemWithStatus) => void;
   onDeleteItem: (id: string) => void;
   onAddItem?: () => void;
+  // Filter context for empty states
+  searchTerm?: string;
+  statusFilter?: string;
+  locationFilter?: string;
+  showExpiringWithin7Days?: boolean;
+  totalItemsCount?: number;
+  onClearFilters?: () => void;
 }
 
-export default function LocationGrid({ location, items, onEditItem, onDeleteItem }: LocationGridProps) {
+export default function LocationGrid({ 
+  location, 
+  items, 
+  onEditItem, 
+  onDeleteItem,
+  onAddItem,
+  searchTerm,
+  statusFilter,
+  locationFilter,
+  showExpiringWithin7Days,
+  totalItemsCount = 0,
+  onClearFilters
+}: LocationGridProps) {
+
+  const getEmptyStateType = (): string => {
+    // If there are no items in the entire freezer
+    if (totalItemsCount === 0) {
+      return 'no-items';
+    }
+    
+    // If there are items in freezer but none in this location and no filters applied
+    if (!searchTerm && (!statusFilter || statusFilter === 'All') && (!locationFilter || locationFilter === 'All') && !showExpiringWithin7Days) {
+      return 'location-empty';
+    }
+    
+    // If only search is applied
+    if (searchTerm && (!statusFilter || statusFilter === 'All') && (!locationFilter || locationFilter === 'All') && !showExpiringWithin7Days) {
+      return 'search-only';
+    }
+    
+    // If only status filter is applied
+    if (!searchTerm && statusFilter && statusFilter !== 'All' && (!locationFilter || locationFilter === 'All') && !showExpiringWithin7Days) {
+      return 'status-filter';
+    }
+    
+    // If only date filter is applied
+    if (!searchTerm && (!statusFilter || statusFilter === 'All') && (!locationFilter || locationFilter === 'All') && showExpiringWithin7Days) {
+      return 'date-filter';
+    }
+    
+    // If a specific location is filtered BUT there are other filters active (status, search, date)
+    // This means the location has items, but none match the other criteria
+    if (locationFilter && locationFilter !== 'All' && locationFilter === location && 
+        (searchTerm || (statusFilter && statusFilter !== 'All') || showExpiringWithin7Days)) {
+      return 'no-results';
+    }
+    
+    // If a specific location is filtered and it's truly empty (no other filters)
+    if (locationFilter && locationFilter !== 'All' && locationFilter === location) {
+      return 'location-empty';
+    }
+    
+    // Multiple filters or complex combinations
+    return 'no-results';
+  };
+
   if (items.length === 0) {
     return (
-      <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-300/40">
-        <div className="px-6 py-4 border-b border-slate-300/60">
-          <h3 className="text-lg font-semibold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">{location}</h3>
-        </div>
-        <div className="p-12">
-          <div className="text-center">
-            <p className="text-slate-500 font-medium">No items in {location}</p>
-            <p className="text-xs text-slate-400 mt-1">Add your first item to get started</p>
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-300/40 overflow-hidden">
+        <div className="px-6 py-5 border-b border-slate-300/60 bg-gradient-to-r from-slate-50/50 to-white/50">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">{location}</h3>
+            <span className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full font-medium">0 items</span>
           </div>
+        </div>
+        <div className="p-6">
+          <EmptyState
+            type={getEmptyStateType() as any}
+            location={location}
+            searchTerm={searchTerm}
+            statusFilter={statusFilter}
+            locationFilter={locationFilter}
+            showExpiringWithin7Days={showExpiringWithin7Days}
+            totalItemsCount={totalItemsCount}
+            onAction={onClearFilters}
+            onAddItem={onAddItem}
+          />
         </div>
       </div>
     );

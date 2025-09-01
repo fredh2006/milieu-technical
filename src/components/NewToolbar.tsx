@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { SearchFilters, ItemStatus, FreezerLocation } from '../types';
 import { Upload, Search, Filter, Tag, BarChart3, Menu, Grid, Calendar } from 'lucide-react';
+import CustomSelect from './ui/CustomSelect';
 
 interface NewToolbarProps {
   onFiltersChange: (filters: SearchFilters) => void;
@@ -14,16 +15,35 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
   const [statusFilter, setStatusFilter] = useState<ItemStatus | 'All'>('All');
   const [locationFilter, setLocationFilter] = useState<FreezerLocation | 'All'>('All');
   const [showExpiringWithin7Days, setShowExpiringWithin7Days] = useState(false);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  const debouncedOnFiltersChange = useCallback((filters: SearchFilters) => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      onFiltersChange(filters);
+    }, 300);
+  }, [onFiltersChange]);
 
   const handleSearchChange = useCallback((value: string) => {
     setSearchTerm(value);
-    onFiltersChange({
+    debouncedOnFiltersChange({
       searchTerm: value,
       statusFilter,
       locationFilter,
       showExpiringWithin7Days
     });
-  }, [onFiltersChange, statusFilter, locationFilter, showExpiringWithin7Days]);
+  }, [debouncedOnFiltersChange, statusFilter, locationFilter, showExpiringWithin7Days]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
 
   const handleStatusFilterChange = useCallback((value: ItemStatus | 'All') => {
     setStatusFilter(value);
@@ -107,27 +127,33 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          <select
-            value={statusFilter}
-            onChange={(e) => handleStatusFilterChange(e.target.value as ItemStatus | 'All')}
-            className="px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 backdrop-blur-sm font-medium text-slate-700"
-          >
-            <option value="All">All Status</option>
-            <option value="Fresh">Fresh</option>
-            <option value="Expiring Soon">Expiring Soon</option>
-            <option value="Expired">Expired</option>
-          </select>
+          <div className="min-w-[140px]">
+            <CustomSelect
+              value={statusFilter}
+              onChange={(value) => handleStatusFilterChange(value as ItemStatus | 'All')}
+              options={[
+                { value: 'All', label: 'All Status' },
+                { value: 'Fresh', label: 'Fresh' },
+                { value: 'Expiring Soon', label: 'Expiring Soon' },
+                { value: 'Expired', label: 'Expired' }
+              ]}
+              className="text-sm"
+            />
+          </div>
 
-          <select
-            value={locationFilter}
-            onChange={(e) => handleLocationFilterChange(e.target.value as FreezerLocation | 'All')}
-            className="px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 backdrop-blur-sm font-medium text-slate-700"
-          >
-            <option value="All">All Locations</option>
-            <option value="Top Drawer">Top Drawer</option>
-            <option value="Bottom Drawer">Bottom Drawer</option>
-            <option value="Door">Door</option>
-          </select>
+          <div className="min-w-[160px]">
+            <CustomSelect
+              value={locationFilter}
+              onChange={(value) => handleLocationFilterChange(value as FreezerLocation | 'All')}
+              options={[
+                { value: 'All', label: 'All Locations' },
+                { value: 'Top Drawer', label: 'Top Drawer' },
+                { value: 'Bottom Drawer', label: 'Bottom Drawer' },
+                { value: 'Door', label: 'Door' }
+              ]}
+              className="text-sm"
+            />
+          </div>
 
           <button
             onClick={handleExpiringToggle}
