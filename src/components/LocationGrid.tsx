@@ -36,7 +36,7 @@ export default function LocationGrid({
 }: LocationGridProps) {
   const pagination = usePagination(items, { itemsPerPage: 5 });
 
-  const getEmptyStateType = (): string => {
+  const getEmptyStateType = (): 'no-items' | 'no-results' | 'filter-empty' | 'location-empty' | 'search-only' | 'status-filter' | 'date-filter' => {
     // If there are no items in the entire freezer
     if (totalItemsCount === 0) {
       return 'no-items';
