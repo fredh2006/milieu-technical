@@ -82,46 +82,52 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
         <div className="flex items-center gap-4 flex-wrap">
           <button
             onClick={onAddItem}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-blue-500/25"
+            aria-label="Add new item to inventory"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-blue-500/25 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
           >
-            <Upload className="w-4 h-4" />
+            <Upload className="w-4 h-4" aria-hidden="true" />
             Add Item
           </button>
 
           <div className="flex-1 relative max-w-md">
+            <label htmlFor="search-input" className="sr-only">Search items</label>
             <input
+              id="search-input"
               type="text"
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Search items..."
+              aria-label="Search freezer items"
               className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 backdrop-blur-sm placeholder-slate-400"
             />
-            <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" aria-hidden="true" />
           </div>
 
-          <div className="ml-auto flex items-center gap-1 bg-white/70 backdrop-blur-sm rounded-xl border border-white/40 p-1">
+          <div className="ml-auto flex items-center gap-1 bg-white/70 backdrop-blur-sm rounded-xl border border-white/40 p-1" role="group" aria-label="View mode selection">
             <button 
-              className={`p-2.5 rounded-lg transition-all duration-200 ${
+              className={`p-2.5 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-1 ${
                 viewMode === 'table' 
                   ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm' 
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
               onClick={() => onViewModeChange?.('table')}
-              title="Table view"
+              aria-label="Switch to table view"
+              aria-pressed={viewMode === 'table'}
             >
-              <Menu className="w-4 h-4" />
+              <Menu className="w-4 h-4" aria-hidden="true" />
             </button>
 
             <button 
-              className={`p-2.5 rounded-lg transition-all duration-200 ${
+              className={`p-2.5 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-1 ${
                 viewMode === 'grid' 
                   ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm' 
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
               onClick={() => onViewModeChange?.('grid')}
-              title="Grid view"
+              aria-label="Switch to grid view"
+              aria-pressed={viewMode === 'grid'}
             >
-              <Grid className="w-4 h-4" />
+              <Grid className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -157,16 +163,18 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
 
           <button
             onClick={handleExpiringToggle}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
+            aria-pressed={showExpiringWithin7Days}
+            aria-label={`Filter items expiring in 7 days - currently ${showExpiringWithin7Days ? 'enabled' : 'disabled'}`}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 ${
               showExpiringWithin7Days
                 ? 'bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 border-amber-200 shadow-sm'
                 : 'bg-white/70 backdrop-blur-sm text-slate-700 border-slate-200 hover:bg-slate-50'
             }`}
           >
-            <Calendar className="w-4 h-4" />
+            <Calendar className="w-4 h-4" aria-hidden="true" />
             Expiring in 7 days
             {showExpiringWithin7Days && (
-              <span className="ml-2 px-2 py-0.5 bg-gradient-to-r from-amber-200 to-orange-200 text-amber-800 rounded-lg text-xs font-semibold">ON</span>
+              <span className="ml-2 px-2 py-0.5 bg-gradient-to-r from-amber-200 to-orange-200 text-amber-800 rounded-lg text-xs font-semibold" aria-hidden="true">ON</span>
             )}
           </button>
 
@@ -184,7 +192,8 @@ export default function NewToolbar({ onFiltersChange, onAddItem, viewMode = 'tab
                   showExpiringWithin7Days: false
                 });
               }}
-              className="text-sm text-slate-500 hover:text-slate-700 font-medium px-3 py-2 rounded-lg hover:bg-slate-100 transition-all duration-200"
+              aria-label="Clear all active filters"
+              className="text-sm text-slate-500 hover:text-slate-700 font-medium px-3 py-2 rounded-lg hover:bg-slate-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
             >
               Clear filters
             </button>

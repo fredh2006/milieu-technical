@@ -256,22 +256,22 @@ function App() {
           </div>
           
           <div className="mb-8">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-              <div className="bg-gradient-to-br from-white/90 via-slate-50/50 to-blue-50/30 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/30 hover:shadow-xl hover:border-blue-200/40 transition-all duration-300 group">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6" role="region" aria-label="Inventory statistics">
+              <div className="bg-gradient-to-br from-white/90 via-slate-50/50 to-blue-50/30 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/30 hover:shadow-xl hover:border-blue-200/40 transition-all duration-300 group" role="status" aria-label="Total items in inventory">
                 <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Total Items</div>
-                <div className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent group-hover:from-slate-900 group-hover:to-blue-800 transition-all duration-300">{totalItems}</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent group-hover:from-slate-900 group-hover:to-blue-800 transition-all duration-300" aria-label={`${totalItems} total items`}>{totalItems}</div>
               </div>
-              <div className="bg-gradient-to-br from-emerald-100/80 via-green-50 to-teal-50/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-emerald-200/50 hover:shadow-xl hover:border-emerald-300/60 transition-all duration-300 group">
+              <div className="bg-gradient-to-br from-emerald-100/80 via-green-50 to-teal-50/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-emerald-200/50 hover:shadow-xl hover:border-emerald-300/60 transition-all duration-300 group" role="status" aria-label="Fresh items count">
                 <div className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2">Fresh</div>
-                <div className="text-3xl font-bold bg-gradient-to-r from-emerald-700 to-teal-600 bg-clip-text text-transparent group-hover:from-emerald-800 group-hover:to-teal-700 transition-all duration-300">{freshItems}</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-emerald-700 to-teal-600 bg-clip-text text-transparent group-hover:from-emerald-800 group-hover:to-teal-700 transition-all duration-300" aria-label={`${freshItems} fresh items`}>{freshItems}</div>
               </div>
-              <div className="bg-gradient-to-br from-amber-100/80 via-orange-50 to-yellow-50/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-amber-200/50 hover:shadow-xl hover:border-amber-300/60 transition-all duration-300 group">
+              <div className="bg-gradient-to-br from-amber-100/80 via-orange-50 to-yellow-50/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-amber-200/50 hover:shadow-xl hover:border-amber-300/60 transition-all duration-300 group" role="status" aria-label="Items expiring soon count">
                 <div className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">Expiring Soon</div>
-                <div className="text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent group-hover:from-amber-800 group-hover:to-orange-700 transition-all duration-300">{expiringItems}</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent group-hover:from-amber-800 group-hover:to-orange-700 transition-all duration-300" aria-label={`${expiringItems} items expiring soon`}>{expiringItems}</div>
               </div>
-              <div className="bg-gradient-to-br from-rose-100/80 via-red-50 to-pink-50/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-rose-200/50 hover:shadow-xl hover:border-rose-300/60 transition-all duration-300 group">
+              <div className="bg-gradient-to-br from-rose-100/80 via-red-50 to-pink-50/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-rose-200/50 hover:shadow-xl hover:border-rose-300/60 transition-all duration-300 group" role="status" aria-label="Expired items count">
                 <div className="text-xs font-bold text-rose-800 uppercase tracking-wider mb-2">Expired</div>
-                <div className="text-3xl font-bold bg-gradient-to-r from-rose-700 to-red-600 bg-clip-text text-transparent group-hover:from-rose-800 group-hover:to-red-700 transition-all duration-300">{expiredItems}</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-rose-700 to-red-600 bg-clip-text text-transparent group-hover:from-rose-800 group-hover:to-red-700 transition-all duration-300" aria-label={`${expiredItems} expired items`}>{expiredItems}</div>
               </div>
             </div>
             

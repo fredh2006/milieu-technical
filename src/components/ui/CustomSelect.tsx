@@ -10,6 +10,7 @@ interface CustomSelectProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  id?: string;
 }
 
 export default function CustomSelect({
@@ -20,10 +21,18 @@ export default function CustomSelect({
   onChange,
   placeholder = 'Select an option',
   disabled = false,
-  className = ''
+  className = '',
+  id
 }: CustomSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const selectRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const optionsRef = useRef<HTMLButtonElement[]>([]);
+  
+  const selectId = id || `custom-select-${Math.random().toString(36).substr(2, 9)}`;
+  const errorId = error ? `${selectId}-error` : undefined;
+  const listboxId = `${selectId}-listbox`;
 
   const selectedOption = options.find(option => option.value === value);
 
@@ -31,30 +40,104 @@ export default function CustomSelect({
     const handleClickOutside = (event: MouseEvent) => {
       if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setActiveIndex(-1);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isOpen) return;
+      
+      event.preventDefault();
+      
+      switch (event.key) {
+        case 'ArrowDown':
+          setActiveIndex(prev => prev < options.length - 1 ? prev + 1 : 0);
+          break;
+        case 'ArrowUp':
+          setActiveIndex(prev => prev > 0 ? prev - 1 : options.length - 1);
+          break;
+        case 'Enter':
+        case ' ':
+          if (activeIndex >= 0) {
+            onChange(options[activeIndex].value);
+            setIsOpen(false);
+            setActiveIndex(-1);
+            buttonRef.current?.focus();
+          }
+          break;
+        case 'Escape':
+          setIsOpen(false);
+          setActiveIndex(-1);
+          buttonRef.current?.focus();
+          break;
+        case 'Home':
+          setActiveIndex(0);
+          break;
+        case 'End':
+          setActiveIndex(options.length - 1);
+          break;
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, activeIndex, options, onChange]);
+  
+  // Focus management for active option
+  useEffect(() => {
+    if (isOpen && activeIndex >= 0 && optionsRef.current[activeIndex]) {
+      optionsRef.current[activeIndex].scrollIntoView({ block: 'nearest' });
+    }
+  }, [activeIndex, isOpen]);
 
   const handleOptionClick = (optionValue: string) => {
     onChange(optionValue);
     setIsOpen(false);
+    setActiveIndex(-1);
+    buttonRef.current?.focus();
+  };
+  
+  const handleButtonClick = () => {
+    if (disabled) return;
+    setIsOpen(!isOpen);
+    if (!isOpen) {
+      // When opening, set active index to current selection if it exists
+      const currentIndex = options.findIndex(opt => opt.value === value);
+      setActiveIndex(currentIndex >= 0 ? currentIndex : 0);
+    } else {
+      setActiveIndex(-1);
+    }
   };
 
   return (
     <div className="space-y-1">
       {label && (
-        <label className="block text-sm font-medium text-slate-700">
+        <label htmlFor={selectId} className="block text-sm font-medium text-slate-700">
           {label}
         </label>
       )}
       <div ref={selectRef} className="relative">
         <button
+          ref={buttonRef}
+          id={selectId}
           type="button"
-          onClick={() => !disabled && setIsOpen(!isOpen)}
+          onClick={handleButtonClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleButtonClick();
+            }
+          }}
           disabled={disabled}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          aria-labelledby={label ? `${selectId}-label` : undefined}
+          aria-describedby={errorId}
+          aria-invalid={error ? 'true' : 'false'}
           className={`
             w-full px-4 py-3 border border-slate-200 rounded-xl shadow-sm bg-white/70 backdrop-blur-sm
             focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400
@@ -73,31 +156,50 @@ export default function CustomSelect({
             <ChevronDown 
               className={`w-5 h-5 text-slate-500 transition-transform duration-200 ${
                 isOpen ? 'transform rotate-180' : ''
-              }`} 
+              }`}
+              aria-hidden="true"
             />
           </div>
         </button>
 
         {isOpen && (
-          <div className="absolute z-50 w-full min-w-max mt-2 bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-xl shadow-2xl overflow-hidden">
+          <div 
+            className="absolute z-50 w-full min-w-max mt-2 bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-xl shadow-2xl overflow-hidden"
+            role="listbox"
+            id={listboxId}
+            aria-labelledby={selectId}
+          >
             <div className="max-h-60 overflow-y-auto py-1">
-              {options.map((option) => (
+              {options.map((option, index) => (
                 <button
                   key={option.value}
+                  ref={el => {
+                    if (el) {
+                      optionsRef.current[index] = el;
+                    }
+                  }}
                   type="button"
+                  role="option"
+                  aria-selected={option.value === value}
                   onClick={() => handleOptionClick(option.value)}
+                  onMouseEnter={() => setActiveIndex(index)}
                   className={`
-                    w-full px-4 py-3 text-left hover:bg-blue-50/80 transition-colors duration-150
+                    w-full px-4 py-3 text-left transition-colors duration-150
                     flex items-center justify-between font-medium whitespace-nowrap
+                    focus:outline-none focus:bg-blue-50/80
                     ${option.value === value 
                       ? 'bg-blue-100/80 text-blue-700' 
-                      : 'text-slate-700 hover:text-slate-900'
+                      : 'text-slate-700'
+                    }
+                    ${index === activeIndex 
+                      ? 'bg-blue-50/80 text-slate-900' 
+                      : 'hover:bg-blue-50/80 hover:text-slate-900'
                     }
                   `}
                 >
                   <span className="flex-1">{option.label}</span>
                   {option.value === value && (
-                    <Check className="w-4 h-4 text-blue-600 ml-3 flex-shrink-0" />
+                    <Check className="w-4 h-4 text-blue-600 ml-3 flex-shrink-0" aria-hidden="true" />
                   )}
                 </button>
               ))}
@@ -106,7 +208,7 @@ export default function CustomSelect({
         )}
       </div>
       {error && (
-        <p className="text-sm text-red-600">{error}</p>
+        <p id={errorId} className="text-sm text-red-600" role="alert">{error}</p>
       )}
     </div>
   );

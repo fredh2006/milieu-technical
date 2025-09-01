@@ -113,7 +113,7 @@ export default function LocationTable({
   }
 
   return (
-    <div className="bg-gradient-to-br from-white/90 via-slate-50/40 to-blue-50/20 backdrop-blur-xl rounded-3xl shadow-xl border border-white/40 overflow-hidden hover:shadow-2xl transition-all duration-500">
+    <div className="bg-gradient-to-br from-white/90 via-slate-50/40 to-blue-50/20 backdrop-blur-xl rounded-3xl shadow-xl border border-slate-300 overflow-hidden hover:shadow-2xl transition-all duration-500">
       <div className="px-6 py-4 border-b border-slate-200/60 bg-gradient-to-r from-slate-100/60 via-white/50 to-blue-50/40 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 bg-clip-text text-transparent tracking-tight">{location}</h3>

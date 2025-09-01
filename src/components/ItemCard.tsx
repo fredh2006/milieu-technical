@@ -32,13 +32,13 @@ export default function ItemCard({ item, onEdit, onDelete }: ItemCardProps) {
       <div className="space-y-3">
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-500 font-medium">Expires:</span>
-          <span className={`font-semibold ${item.status === 'Expired' ? 'text-rose-600' : 'text-slate-700'}`}>
+          <time className={`font-semibold ${item.status === 'Expired' ? 'text-rose-600' : 'text-slate-700'}`} dateTime={item.expiresOn.toISOString()}>
             {format(item.expiresOn, 'MMM dd, yyyy')}
-          </span>
+          </time>
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-500 font-medium">Added:</span>
-          <span className="text-slate-700 font-semibold">{format(item.addedAt, 'MMM dd, yyyy')}</span>
+          <time className="text-slate-700 font-semibold" dateTime={item.addedAt.toISOString()}>{format(item.addedAt, 'MMM dd, yyyy')}</time>
         </div>
       </div>
 
@@ -53,13 +53,15 @@ export default function ItemCard({ item, onEdit, onDelete }: ItemCardProps) {
       <div className="flex space-x-3 pt-4">
         <button
           onClick={() => onEdit(item)}
-          className="flex-1 bg-gradient-to-r from-slate-50 to-slate-100 hover:from-blue-50 hover:to-blue-100 text-slate-700 hover:text-blue-700 font-medium py-2.5 px-4 rounded-xl transition-all duration-200 border border-slate-200 hover:border-blue-200"
+          aria-label={`Edit ${item.name}`}
+          className="flex-1 bg-gradient-to-r from-slate-50 to-slate-100 hover:from-blue-50 hover:to-blue-100 text-slate-700 hover:text-blue-700 font-medium py-2.5 px-4 rounded-xl transition-all duration-200 border border-slate-200 hover:border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
         >
           Edit
         </button>
         <button
           onClick={handleDelete}
-          className="flex-1 bg-gradient-to-r from-rose-50 to-red-50 hover:from-red-500 hover:to-red-600 text-rose-700 hover:text-white font-medium py-2.5 px-4 rounded-xl transition-all duration-200 border border-rose-200 hover:border-red-500"
+          aria-label={`Delete ${item.name}`}
+          className="flex-1 bg-gradient-to-r from-rose-50 to-red-50 hover:from-red-500 hover:to-red-600 text-rose-700 hover:text-white font-medium py-2.5 px-4 rounded-xl transition-all duration-200 border border-rose-200 hover:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2"
         >
           Delete
         </button>

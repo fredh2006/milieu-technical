@@ -50,8 +50,10 @@ export default function StatusChip({ status, size = 'sm' }: StatusChipProps) {
         ${config.bg} ${config.text} ${config.border}
         ${sizeClasses[size]}
       `}
+      role="status"
+      aria-label={`Status: ${status}`}
     >
-      <Icon className={iconSizes[size]} />
+      <Icon className={iconSizes[size]} aria-hidden="true" />
       <span>{status}</span>
     </span>
   );
