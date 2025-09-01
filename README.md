@@ -75,22 +75,21 @@ All write operations (add, update, delete) use optimistic updates:
 In development, test buttons in the bottom-left corner simulate network failures:
 - Buttons will always fail with a network delay
 
-## ♿ Accessibility Features
+## Accessibility Features
 
 ### Keyboard Navigation
 - **Tab/Shift+Tab**: Navigate through all interactive elements
 - **Space**: Activate buttons and form controls
 - **Escape**: Close modals and dropdowns
 - **Arrow keys**: Navigate dropdown options
-- **Home/End**: Jump to first/last options in dropdowns
 
 ### Screen Reader Support
-- **Visible focus indicators** on all interactive elements
-- **Semantic HTML**: Proper use of headings, lists, and landmarks
-- **ARIA labels**: Descriptive labels for all interactive elements
-- **ARIA live regions**: Status updates announced to screen readers
-- **ARIA states**: `aria-expanded`, `aria-selected`, `aria-pressed`
-- **Role attributes**: `dialog`, `toolbar`, `status`, `listbox`
+- Visible focus indicators on all interactive elements
+- Semantic HTML: Proper use of headings, lists, and landmarks
+- ARIA labels: Descriptive labels for all interactive elements
+- ARIA live regions: Status updates announced to screen readers
+- ARIA states: `aria-expanded`, `aria-selected`, `aria-pressed`
+- Role attributes: `dialog`, `toolbar`, `status`, `listbox`
 
 ### Examples of Accessibility Implementation:
 
@@ -128,7 +127,7 @@ In development, test buttons in the bottom-left corner simulate network failures
 </time>
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
